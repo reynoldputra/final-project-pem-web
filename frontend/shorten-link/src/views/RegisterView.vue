@@ -5,11 +5,11 @@
     class="overflow-hidden relative flex justify-center items-center h-screen bg-[#1F1D2B]"
   >
     <div
-      class="absolute w-[577px] h-[577px] rounded-full bg-[#00385B] top-0 left-0 blur-3xl -top-[188px] -left-[207px] opacity-50"
+      class="absolute w-[577px] h-[577px] rounded-full bg-[#00385B] blur-3xl -top-[188px] -left-[207px] opacity-50"
     ></div>
 
     <div
-      class="absolute w-[577px] h-[577px] rounded-full bg-[#957ADC] bottom-0 right-0 blur-3xl opacity-25 -bottom-[188px] -right-[207px]"
+      class="absolute w-[577px] h-[577px] rounded-full bg-[#957ADC] blur-3xl opacity-25 -bottom-[188px] -right-[207px]"
     ></div>
     <div
       class="flex flex-col justify-center items-center bg-[#252836] w-80 p-8 rounded-xl drop-shadow-lg"
