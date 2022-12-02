@@ -1,7 +1,9 @@
 <template>
   <div class="relative flex justify-center flex-col overflow-hidden">
     <Navbar :name="this.nama_user" class="pt-10"> </Navbar>
-    <div class="flex flex-col justify-center w-full max-w-[900px] pt-32 mx-auto">
+    <div
+      class="flex flex-col justify-center w-full max-w-[900px] pt-32 mx-auto"
+    >
       <input
         type="text"
         class="rounded-2xl text-base text-white py-4 px-10 bg-[#252836] focus:outline-2 focus:outline-[#08A0F7] active:outline-2 active:outline-[#08A0F7] hover:outline-1 hover:outline-[#08A0F7] outline-none w-full shadow-lg"
@@ -19,7 +21,7 @@
         />
         <button
           class="py-4 px-16 rounded-xl font-bold text-white hover:text-slate-300 bg-[#08A0F7] shadow-lg hover:outline-2 hover:outline hover:outline-[#08A0F7]"
-          @click="create(url, shorten)"
+          @click="generateLink(url, shorten)"
         >
           Create
         </button>
@@ -29,20 +31,20 @@
       >
         URL LIST
       </div>
-      <div class="bg-[#252836] mt-8 mb-24 rounded-xl shadow-xl  px-12 py-10">
+      <div class="bg-[#252836] mt-8 mb-24 rounded-xl shadow-xl px-12 py-10">
         <div class="grid grid-cols-6 py-3" v-for="(links, index) in 8">
           <div class="text-white col-span-2 font-normal tracking-wider flex">
             <p class="self-center">asdfasdfasd</p>
-            
           </div>
           <div class="text-[#08A0F7] col-span-3 tracking-wider flex">
-            <p class="self-center hover:cursor-pointer">https://www.youtube.com/v...</p>
-            
+            <p class="self-center hover:cursor-pointer">
+              https://www.youtube.com/v...
+            </p>
           </div>
           <div
             class="font-bold text-white text-center rounded-2xl bg-[#957ADC] px-6 py-1 w-fit col-span-1 tracking-wider"
           >
-          <p class="self-center">8 Click</p>
+            <p class="self-center">8 Click</p>
           </div>
         </div>
       </div>
@@ -57,7 +59,9 @@
 </template>
 
 <script>
-import Navbar from "./components/Navbar.vue";
+import axios from "axios";
+import cookies from "vue-cookies";
+import Navbar from "../components/Navbar.vue";
 export default {
   components: {
     Navbar,
@@ -73,6 +77,25 @@ export default {
         },
       ],
     };
+  },
+  methods: {
+    async generateLink(url, shorten) {
+      const token = cookies.get("token");
+      const bodyParam = {
+        url: url,
+        shorten: shorten,
+      };
+      const res = await axios
+        .post("http://localhost:/shorten", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          bodyParam,
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
   },
 };
 </script>

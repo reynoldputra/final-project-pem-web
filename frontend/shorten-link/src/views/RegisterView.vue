@@ -1,4 +1,22 @@
-<script></script>
+<script>
+import axios from "axios";
+const port = 800;
+export default {
+  methods: {
+    async register(username, gmail, password) {
+      const res = await axios
+        .post(`http://localhost:${port}/register`, {
+          username:username,
+          gmail: gmail,
+          password: password,
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
+};
+</script>
 
 <template>
   <div
@@ -17,11 +35,24 @@
       <div class="font-bold text-lg">REGISTER</div>
       <div class="form-control w-full max-w-xs">
         <label class="label">
+          <span class="label-text">Username</span>
+        </label>
+        <input
+          type="text"
+          placeholder="username"
+          v-model="username"
+          class="flex input input-bordered w-64 max-w-xs rounded-md justify-center items-center"
+        />
+        <label class="label"> </label>
+      </div>
+      <div class="form-control w-full max-w-xs">
+        <label class="label">
           <span class="label-text">Email</span>
         </label>
         <input
           type="text"
           placeholder="user@gmail.com"
+          v-model="gmail"
           class="flex input input-bordered w-64 max-w-xs rounded-md justify-center items-center"
         />
         <label class="label"> </label>
@@ -33,11 +64,17 @@
         <input
           type="password"
           placeholder="Password"
+          v-model="password"
           class="input input-bordered w-64 max-w-xs rounded-md"
         />
         <label class="label"> </label>
       </div>
-      <button class="btn btn-sm rounded-lg bg-sky-500">create</button>
+      <button
+        class="btn btn-sm rounded-lg bg-sky-500"
+        @click="register(username,gmail, password)"
+      >
+        create
+      </button>
       <div class="mt-4 text-xs">Already have an account?</div>
       <button class="text-xs underline underline-offset-1 text-sky-500">
         Log in

@@ -1,4 +1,21 @@
-<script></script>
+<script>
+import axios from 'axios'
+import cookies from 'vue-cookies'
+const port = 8000;
+export default{
+  methods:{
+    async login(gmail, password){
+      const res = await axios.get(`http://locahost:${port}/login`, {
+        gmail : gmail,
+        password : password
+      }).catch((err)=>{
+        console.log(err)
+      })
+      cookies.set('token', res.token)
+    }
+  }
+}
+</script>
 
 <template>
   <div
@@ -20,6 +37,7 @@
           <span class="label-text">Email</span>
         </label>
         <input
+        v-model="login_email"
           type="text"
           placeholder="user@gmail.com"
           class="flex input input-bordered w-64 max-w-xs rounded-md justify-center items-center"
@@ -33,15 +51,17 @@
         <input
           type="password"
           placeholder="Password"
+          v-model="login_password"
           class="input input-bordered w-64 max-w-xs rounded-md"
         />
         <label class="label"> </label>
       </div>
-      <button class="btn btn-sm rounded-lg bg-sky-500">Submit</button>
+      <button class="btn btn-sm rounded-lg bg-sky-500" @click="login(login_email, login_password)">Submit</button>
       <div class="mt-4 text-xs">Don't have an account?</div>
       <button class="text-xs underline underline-offset-1 text-sky-500">
         Register
       </button>
+      <a href="/dashboard">dashboard</a>
     </div>
   </div>
 </template>
