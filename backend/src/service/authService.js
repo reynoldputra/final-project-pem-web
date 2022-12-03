@@ -24,24 +24,25 @@ export const login = async (user) => {
         const _token = await firebaseLogin(user);
         return _token;
     } catch (err) {
-        console.log(err);
+        let httpException = new Error(err.message)
+        httpException.stack = 400
+        throw httpException
     }
 }
 
 
 export const verifyToken = async (req) => {
     if(!req.token)
-        return {
-            status : false,
-            message : "Error validation"
-        }
+        return false
     
     try {
         const res = await admin.auth().verifyIdToken(req.token)
         if(res)
             return true
     } catch (err) { 
-        return false
+        let httpException = new Error(err.message)
+        httpException.stack = 400
+        throw httpException
     }
 }
 
@@ -58,6 +59,8 @@ const firebaseLogin = async (user) => {
         })
         return token;
     } catch (err){
-        console.log(err);
+        let httpException = new Error(err.message)
+        httpException.stack = 400
+        throw httpException
     }
 }  

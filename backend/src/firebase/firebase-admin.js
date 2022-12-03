@@ -5,5 +5,7 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
-export const db = admin.firestore()
+const database = admin.firestore()
+database.settings({timestampsInSnapshots: true})  
+export const db = database
 export default admin;
