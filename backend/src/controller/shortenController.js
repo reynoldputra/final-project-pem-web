@@ -6,7 +6,7 @@ import { createShorten } from '../service/shortenService.js';
 
 const shortenController = express.Router()
 
-shortenController.post('/', [checkIfAuthenticated, shoretenValidator() ], async (req, res) => {
+shortenController.post('/', [checkIfAuthenticated, shoretenValidator()], async (req, res) => {
     const errors = validationResult(req);
     try {
         if(!errors.isEmpty())
@@ -31,5 +31,18 @@ shortenController.post('/', [checkIfAuthenticated, shoretenValidator() ], async 
         })
     }
 })
+
+
+//gunggus => get url
+shortenController.get('/', async(req, res) => {
+    
+})
+
+
+//anap => get url by alias
+shortenController.get('/alias/', async(req, res) => {
+    
+})
+
 
 export default shortenController; 
