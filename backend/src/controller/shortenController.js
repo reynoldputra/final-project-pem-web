@@ -53,4 +53,22 @@ shortenController.get("/in/:alias", async (req, res) => {
     });
   }
 });
-export default shortenController;
+
+shortenController.get('/', checkIfAuthenticated, async (req, res) => {
+    try {
+        const _res = await getShorten(req)
+        res.send({
+            status: true,
+            message: "Succes get short urls",
+            data: _res
+        })
+    } catch (err) {
+        res.send({
+            status: false,
+            message: err.message
+        })
+    }
+})
+
+export default shortenController; 
+
