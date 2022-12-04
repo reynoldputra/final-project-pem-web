@@ -1,6 +1,7 @@
-import { addDoc, collection, doc, getDoc, query, setDoc, where } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, where } from 'firebase/firestore'
 import admin from '../firebase/firebase-admin.js'
 import { db } from '../firebase/firebase.js'
+
 export const createShorten = async (req, token) => {
     try {
         if(!req.alias){
@@ -20,10 +21,34 @@ export const createShorten = async (req, token) => {
         const _res = await setDoc(doc(db, "shorten", req.alias), {
             ...req,
             count : 0,
-            userId : userId
+            userId : userId,
+            timestamp : serverTimestamp()
         }).then(() => req)
 
         return _res;
+    } catch (err) {
+        let httpException = new Error(err.message)
+        httpException.stack = 400
+        throw httpException
+    }
+}
+
+export const getShorten = async (req) => {
+    try {
+        const token = req.headers.authorization
+        const parsedToken = token.split(' ')[1];
+        const userId = await admin.auth().verifyIdToken(parsedToken).then((res) => res.uid)
+        const q = query(collection(db, "shorten"), where("userId", "==", userId))
+        const _res = await getDocs(q);
+        let urls = {}
+        _res.forEach((doc) => {
+            const id = doc.id
+            urls = {
+                ...urls,
+                id : doc.data()
+            }
+        })
+        return urls
     } catch (err) {
         let httpException = new Error(err.message)
         httpException.stack = 400

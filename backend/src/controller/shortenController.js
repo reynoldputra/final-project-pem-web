@@ -2,7 +2,7 @@ import express from 'express'
 import { validationResult } from 'express-validator';
 import { checkIfAuthenticated } from '../middleware/guard/authGuard.js';
 import { shoretenValidator } from '../middleware/validator/shortenValidator.js';
-import { createShorten } from '../service/shortenService.js';
+import { createShorten, getShorten } from '../service/shortenService.js';
 
 const shortenController = express.Router()
 
@@ -26,6 +26,22 @@ shortenController.post('/', [checkIfAuthenticated, shoretenValidator() ], async 
         return _res
     } catch (err) {
         return res.send({
+            status: false,
+            message: err.message
+        })
+    }
+})
+
+shortenController.get('/', checkIfAuthenticated, async (req, res) => {
+    try {
+        const _res = await getShorten(req)
+        res.send({
+            status: true,
+            message: "Succes get short urls",
+            data: _res
+        })
+    } catch (err) {
+        res.send({
             status: false,
             message: err.message
         })
