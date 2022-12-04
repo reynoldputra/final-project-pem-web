@@ -34,7 +34,6 @@ export const login = async (user) => {
 export const verifyToken = async (req) => {
     if(!req.token)
         return false
-    
     try {
         const res = await admin.auth().verifyIdToken(req.token)
         if(res)
