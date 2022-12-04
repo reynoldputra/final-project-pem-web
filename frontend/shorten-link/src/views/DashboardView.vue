@@ -66,7 +66,7 @@ import axios from "axios";
 import cookies from "vue-cookies";
 import Navbar from "../components/Navbar.vue";
 import {auth} from '../firebase/firebase'
-import { signOut } from '@firebase/auth';
+import { signOut } from 'firebase/auth';
 const port = 3001;
 const token = cookies.get("token");
 
