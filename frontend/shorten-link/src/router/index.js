@@ -20,9 +20,10 @@ const router = createRouter({
       path: "/dashboard",
       name:"dashboard",
       component: DashboardView,
-      beforeEnter(to, from){
-        if(!checkAuth()) router.push('login')
-        else next()
+      async beforeEnter(to, from, next){
+         const isVerified = await checkAuth()
+         if(!isVerified) return router.push('/login')
+         else return next()
       }
     }
   ],

@@ -1,6 +1,6 @@
 <template>
   <div class="relative flex justify-center flex-col overflow-hidden">
-    <Navbar :name="this.nama_user" class="pt-10"> </Navbar>
+    <Navbar :name="this.nama_user" @logout="logout" class="pt-10"> </Navbar>
     <div
       class="flex flex-col justify-center w-full max-w-[900px] pt-32 mx-auto"
     >
@@ -33,7 +33,10 @@
       </div>
       <div class="bg-[#252836] mt-8 mb-24 rounded-xl shadow-xl px-12 py-10">
         <div class="grid grid-cols-6 py-3" v-for="(links, index) in 8">
-          <div class="text-white col-span-2 font-normal tracking-wider flex">
+          <div
+            class="text-white col-span-2 font-normal tracking-wider flex"
+            @click="redirectLinks('urlku')"
+          >
             <p class="self-center">asdfasdfasd</p>
           </div>
           <div class="text-[#08A0F7] col-span-3 tracking-wider flex">
@@ -62,6 +65,11 @@
 import axios from "axios";
 import cookies from "vue-cookies";
 import Navbar from "../components/Navbar.vue";
+import {auth} from '../firebase/firebase'
+import { signOut } from '@firebase/auth';
+const port = 3001;
+const token = cookies.get("token");
+
 export default {
   components: {
     Navbar,
@@ -78,23 +86,51 @@ export default {
       ],
     };
   },
+  mounted() {
+    // setTimeout(this.getLinks(), 1000);
+  },
   methods: {
     async generateLink(url, shorten) {
-      const token = cookies.get("token");
-      const bodyParam = {
-        url: url,
-        shorten: shorten,
-      };
       const res = await axios
-        .post("http://localhost:/shorten", {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        .post(
+          `http://localhost:${port}/api/shorten`,
+          {
+            url: url,
+            alias: shorten,
           },
-          bodyParam,
+          {
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        .catch();
+    },
+    async getLinks() {
+      const res = await axios
+        .get(`http://localhost:${port}/api/shorten`)
+        .catch();
+      console.log(res);
+    },
+    async redirectLinks(alias) {
+      const res = await axios
+        .get(`http://127.0.0.1:${port}/api/shorten/in/${alias}`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
         })
         .catch((err) => {
           console.log(err);
         });
+      window.location.assign(`https://${res.data.data}`);
+    },
+    async logout() {
+      await signOut(auth)
+        .then(() => {
+          cookies.remove("token");
+          this.$router.push({ name: "login" });
+        })
+        .catch((err) => console.log(err));
     },
   },
 };
