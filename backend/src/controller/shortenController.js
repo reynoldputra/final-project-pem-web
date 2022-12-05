@@ -2,7 +2,7 @@ import express from "express";
 import { validationResult } from "express-validator";
 import { checkIfAuthenticated } from "../middleware/guard/authGuard.js";
 import { shoretenValidator } from "../middleware/validator/shortenValidator.js";
-import { createShorten, redirectShorten, getShorten} from "../service/shortenService.js";
+import { createShorten, redirectShorten, getShorten } from "../service/shortenService.js";
 
 const shortenController = express.Router();
 
