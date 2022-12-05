@@ -44,7 +44,7 @@
                   >
                   <label
                     for="my-modal1"
-                    class="btn bg-[#08A0F7] btn text-[#FFFFFF]"
+                    class=" bg-[#08A0F7] btn text-[#FFFFFF]"
                     >Update</label
                   >
                 </div>

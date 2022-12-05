@@ -19,9 +19,24 @@
 
 >
 <script>
-
+import axios from 'axios'
 export default {
-  
+    data() {
+        return {
+            alias: this.$route.params.alias,
+            port : 3001
+        }
+    },  
+    async mounted() {
+        console.log(this.alias)
+        const res = await axios
+        .get(`http://127.0.0.1:${this.port}/api/shorten/in/${this.alias}`)
+        .catch((err) => {
+          console.log(err);
+        });
+        console.log(res.data.data)
+        window.location.assign(`https://${res.data.data}`);
+    }
 }
 
 </script>

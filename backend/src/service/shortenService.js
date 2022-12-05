@@ -72,13 +72,9 @@ export const getShorten = async (req) => {
       .then((res) => res.uid);
     const q = query(collection(db, "shorten"), where("userId", "==", userId));
     const _res = await getDocs(q);
-    let urls = {};
+    let urls = [];
     _res.forEach((doc) => {
-      const id = doc.id;
-      urls = {
-        ...urls,
-        id: doc.data(),
-      };
+      urls.push(doc.data())
     });
     return urls;
   } catch (err) {
