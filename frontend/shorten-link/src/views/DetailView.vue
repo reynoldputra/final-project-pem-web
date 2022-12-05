@@ -84,14 +84,14 @@
               </div>
             </div>
           </div>
-          <h1 class="text-white font-bold text-2xl pt-4">urlaliasname</h1>
+          <h1 class="text-white font-bold text-2xl pt-4">{{ alias }}</h1>
           <p class="pt-4 text-[#08A0F7]">
-            https://www.youtube.com/vfsadfsdfsadfasfsasfas
+            {{ url }}
           </p>
           <div
             class="font-semibold text-white rounded-full py-1 text-center bg-gradient-to-r from-[#957ADC] to-[#4B89DD] w-24 mt-6 shadow-lg"
           >
-            8 Click
+            {{ count }}
           </div>
         </div>
       </div>
@@ -107,10 +107,38 @@
 
 <script>
 import Navbar from "../components/Navbar.vue";
+import axios from 'axios'
+import cookies from "vue-cookies";
+const token = cookies.get("token");
 
 export default {
+  data() {
+    return{
+      alias : this.$route.params.alias,
+      url: "",
+      count: "",
+      edit : {
+        url: "",
+        alias: ""
+      }
+    }
+  },  
   components: {
     Navbar,
   },
+  mounted() { 
+    axios.get("http://localhost:3001/api/shorten/"+this.alias, 
+          {
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          }
+    )
+      .then((res) => {
+        this.url = res.data.data.url
+        this.alias = res.data.data.alias
+        this.count = res.data.data.count
+      })
+  }
 };
 </script>

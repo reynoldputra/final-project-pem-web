@@ -62,6 +62,17 @@ export const redirectShorten = async (alias) => {
   }
 };
 
+export const getUrlbyAlias = async (alias) => {
+  try {
+    const docSnap = await getDoc(doc(db, "shorten", alias));
+    return docSnap.data()
+  } catch (err) {
+    let httpException = new Error(err.message);
+    httpException.stack = 400;
+    throw httpException;
+  }
+}
+
 export const getShorten = async (req) => {
   try {
     const token = req.headers.authorization;

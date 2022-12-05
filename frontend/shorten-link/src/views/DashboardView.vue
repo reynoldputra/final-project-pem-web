@@ -45,9 +45,10 @@
             </p>
           </div>
           <div
-          class="font-bold text-white text-center rounded-2xl bg-[#957ADC] px-6 py-1 w-fit col-span-1 tracking-wider"
+          class="font-bold text-white text-center rounded-2xl bg-[#957ADC] px-6 py-1 w-fit col-span-1 tracking-wider cursor-pointer"
+          @click="$router.push(`/dashboard/url/${link.alias}`)"
           >
-          <p class="self-center">{{ link.count }}</p>
+          <p class="self-center">Detail</p>
         </div>
         </div>
       </div>
