@@ -52,7 +52,6 @@ authController.post('/login', loginValidator(), async (req, res) => {
 authController.post('/verifytoken', tokenValidator(),  async (req, res) => {
     try {
         const _res = await verifyToken(req.body)
-        console.log(_res);
         if(_res)
             res.send( {
                 status: true,
