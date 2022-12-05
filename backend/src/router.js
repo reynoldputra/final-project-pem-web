@@ -4,7 +4,7 @@ import authController from './controller/authController.js';
 import shortenController from './controller/shortenController.js';
 
 const app = express()
-const port = 3001;
+const port = 3004
 
 app.use(cors())
 app.use(express.json())
