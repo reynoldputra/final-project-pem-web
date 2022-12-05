@@ -32,22 +32,22 @@
         URL LIST
       </div>
       <div class="bg-[#252836] mt-8 mb-24 rounded-xl shadow-xl px-12 py-10">
-        <div class="grid grid-cols-6 py-3" v-for="(links, index) in 8">
+        <div class="grid grid-cols-6 py-3" v-for="(link, index) in links">
           <div
             class="text-white col-span-2 font-normal tracking-wider flex"
-            @click="redirectLinks('urlku')"
+            @click="redirectLinks(link.alias)"
           >
-            <p class="self-center">asdfasdfasd</p>
+            <p class="self-center">{{ link.alias }}</p>
           </div>
           <div class="text-[#08A0F7] col-span-3 tracking-wider flex">
-            <p class="self-center hover:cursor-pointer">
-              https://www.youtube.com/v...
+            <p class="self-center hover:cursor-pointer truncate max-w-xs">
+              {{ link.url }}
             </p>
           </div>
           <div
             class="font-bold text-white text-center rounded-2xl bg-[#957ADC] px-6 py-1 w-fit col-span-1 tracking-wider"
           >
-            <p class="self-center">8 Click</p>
+            <p class="self-center">{{ link.count }}</p>
           </div>
         </div>
       </div>
@@ -67,6 +67,7 @@ import cookies from "vue-cookies";
 import Navbar from "../components/Navbar.vue";
 import {auth} from '../firebase/firebase'
 import { signOut } from '@firebase/auth';
+
 const port = 3001;
 const token = cookies.get("token");
 
@@ -77,17 +78,11 @@ export default {
   data() {
     return {
       nama_user: "Ahnaf Musyaffa",
-      links: [
-        {
-          shortenLink: "",
-          originalLink: "",
-          counts: 0,
-        },
-      ],
+      links: [],
     };
   },
-  mounted() {
-    // setTimeout(this.getLinks(), 1000);
+  mounted(){
+    this.getLinks()
   },
   methods: {
     async generateLink(url, shorten) {
@@ -105,12 +100,17 @@ export default {
           }
         )
         .catch();
+        this.getLinks()
     },
     async getLinks() {
       const res = await axios
-        .get(`http://localhost:${port}/api/shorten`)
+        .get(`http://localhost:${port}/api/shorten`,{
+          headers:{
+            authorization: `Bearer ${token}`
+          }
+        })
         .catch();
-      console.log(res);
+      this.links.push(res.data.data.id)
     },
     async redirectLinks(alias) {
       const res = await axios
@@ -122,7 +122,8 @@ export default {
         .catch((err) => {
           console.log(err);
         });
-      window.location.assign(`https://${res.data.data}`);
+      this.getLinks()
+      window.location.assign(`${res.data.data}`);
     },
     async logout() {
       await signOut(auth)
