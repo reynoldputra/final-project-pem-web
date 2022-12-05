@@ -7,7 +7,8 @@ export const register = async (user) => {
     //create account
     try {
         const _res = await admin.auth().createUser({
-            ...user
+            ...user,
+            displayName : user.displayname
         })
         return {
             email : _res.email
@@ -32,12 +33,13 @@ export const login = async (user) => {
 
 
 export const verifyToken = async (req) => {
-    if(!req.token)
-        return false
     try {
-        const res = await admin.auth().verifyIdToken(req.token)
-        if(res)
-            return true
+        const userId = await admin.auth().verifyIdToken(req.token).then((res) => res.uid)
+        const userData = await admin.auth().getUser(userId).then((res) => res)
+        if(userData)
+            return {
+                username : userData.displayName
+            }
     } catch (err) { 
         let httpException = new Error(err.message)
         httpException.stack = 400

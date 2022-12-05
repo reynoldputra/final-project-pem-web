@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, where } from 'firebase/firestore'
+import { collection, doc, getDoc, updateDoc, getDocs, query, serverTimestamp, setDoc, where } from 'firebase/firestore'
 import admin from '../firebase/firebase-admin.js'
 import { db } from '../firebase/firebase.js'
 
@@ -30,8 +30,22 @@ export const createShorten = async (req, token) => {
         let httpException = new Error(err.message)
         httpException.stack = 400
         throw httpException
-    }
 }
+}
+
+export const redirectShorten = async (alias) => {
+  try {
+    const docSnap = await getDoc(doc(db, "shorten", alias));
+    await updateDoc(doc(db, "shorten", req.alias),{
+      count : docSnap.data().count++
+    })
+    return docSnap.data().url
+  } catch (err) {
+    let httpException = new Error(err.message);
+    httpException.stack = 400;
+    throw httpException;
+  }
+}; 
 
 export const getShorten = async (req) => {
     try {
@@ -57,11 +71,12 @@ export const getShorten = async (req) => {
 }
 
 function makeid(length) {
-    var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
+  var result = "";
+  var characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
 }

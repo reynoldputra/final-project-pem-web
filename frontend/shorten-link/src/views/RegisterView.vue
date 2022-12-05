@@ -1,18 +1,17 @@
 <script>
 import axios from "axios";
-const port = 800;
+const port = 3001;
 export default {
   methods: {
     async register(username, gmail, password) {
       const res = await axios
-        .post(`http://localhost:${port}/register`, {
-          username:username,
-          gmail: gmail,
+        .post(`http://localhost:3001/api/auth/register`, {
+          displayname: username,
+          email: gmail,
           password: password,
         })
-        .catch((err) => {
-          console.log(err);
-        });
+        .catch();
+        if(res.data.status == true) this.$router.push({name: 'login'})
     },
   },
 };
@@ -71,7 +70,7 @@ export default {
       </div>
       <button
         class="btn btn-sm rounded-lg bg-sky-500"
-        @click="register(username,gmail, password)"
+        @click="register(username, gmail, password)"
       >
         create
       </button>

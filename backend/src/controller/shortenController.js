@@ -2,7 +2,7 @@ import express from "express";
 import { validationResult } from "express-validator";
 import { checkIfAuthenticated } from "../middleware/guard/authGuard.js";
 import { shoretenValidator } from "../middleware/validator/shortenValidator.js";
-import { createShorten, getShorten } from "../service/shortenService.js";
+import { createShorten, redirectShorten, getShorten} from "../service/shortenService.js";
 
 const shortenController = express.Router();
 
@@ -28,6 +28,40 @@ shortenController.post(
           data: _res,
         });
       });
+      return _res;
+    } catch (err) {
+      return res.send({
+        status: false,
+        message: err.message,
+      });
+    }
+  }
+);
+
+shortenController.get("/in/:alias", async (req, res) => {
+  const { alias } = req.params;
+  try {
+    const _res = await redirectShorten(alias).then((_res) => {
+      return res.send({
+        data: _res
+      })
+    });
+  } catch (err) {
+    return res.send({
+      status: false,
+      message: err.message,
+    });
+  }
+});
+
+shortenController.get('/', checkIfAuthenticated, async (req, res) => {
+    try {
+        const _res = await getShorten(req)
+        res.send({
+          status: true,
+          message: "Succes create short url",
+          data: _res,
+        });
       return _res;
     } catch (err) {
       return res.send({
