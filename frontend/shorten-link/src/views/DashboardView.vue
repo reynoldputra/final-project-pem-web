@@ -110,6 +110,7 @@ export default {
           }
         })
         .catch();
+
       this.links.push(res.data.data.id)
     },
     async redirectLinks(alias) {

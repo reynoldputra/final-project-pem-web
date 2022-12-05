@@ -88,7 +88,7 @@ shortenController.get("/", checkIfAuthenticated, async (req, res) => {
   }
 });
 
-shortenController.delete();{
-    await axios.delete
-}
+// shortenController.delete();{
+//     await axios.delete
+// }
 export default shortenController;
