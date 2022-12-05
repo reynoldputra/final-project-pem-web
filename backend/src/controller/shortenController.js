@@ -58,17 +58,37 @@ shortenController.get('/', checkIfAuthenticated, async (req, res) => {
     try {
         const _res = await getShorten(req)
         res.send({
-            status: true,
-            message: "Succes get short urls",
-            data: _res
-        })
+          status: true,
+          message: "Succes create short url",
+          data: _res,
+        });
+      return _res;
     } catch (err) {
-        res.send({
-            status: false,
-            message: err.message
-        })
+      return res.send({
+        status: false,
+        message: err.message,
+      });
     }
-})
+  }
+);
 
-export default shortenController; 
+shortenController.get("/", checkIfAuthenticated, async (req, res) => {
+  try {
+    const _res = await getShorten(req);
+    res.send({
+      status: true,
+      message: "Succes get short urls",
+      data: _res,
+    });
+  } catch (err) {
+    res.send({
+      status: false,
+      message: err.message,
+    });
+  }
+});
 
+shortenController.delete();{
+    await axios.delete
+}
+export default shortenController;

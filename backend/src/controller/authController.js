@@ -55,7 +55,8 @@ authController.post('/verifytoken', tokenValidator(),  async (req, res) => {
         if(_res)
             res.send( {
                 status: true,
-                message: "Token validated"  
+                message: "Token validated",
+                data: _res
             })
         else 
             res.send( {
