@@ -32,9 +32,9 @@
         URL LIST
       </div>
       <div class="bg-[#252836] mt-8 mb-24 rounded-xl shadow-xl px-12 py-10">
-        <div class="grid grid-cols-6 py-3" v-for="(link, index) in links">
+        <div class="grid grid-cols-6 py-3" v-for="(link, index) in links" :key="index">
           <div
-            class="text-white col-span-2 font-normal tracking-wider flex"
+          class="text-white col-span-2 font-normal tracking-wider flex"
             @click="redirectLinks(link.alias)"
           >
             <p class="self-center">{{ link.alias }}</p>
@@ -45,10 +45,10 @@
             </p>
           </div>
           <div
-            class="font-bold text-white text-center rounded-2xl bg-[#957ADC] px-6 py-1 w-fit col-span-1 tracking-wider"
+          class="font-bold text-white text-center rounded-2xl bg-[#957ADC] px-6 py-1 w-fit col-span-1 tracking-wider"
           >
-            <p class="self-center">{{ link.count }}</p>
-          </div>
+          <p class="self-center">{{ link.count }}</p>
+        </div>
         </div>
       </div>
     </div>
@@ -110,20 +110,10 @@ export default {
           }
         })
         .catch();
-      this.links.push(res.data.data.id)
+      this.links.push(...res.data.data)
     },
     async redirectLinks(alias) {
-      const res = await axios
-        .get(`http://127.0.0.1:${port}/api/shorten/in/${alias}`, {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      this.getLinks()
-      window.location.assign(`${res.data.data}`);
+      this.$router.push("/in/"+alias)
     },
     async logout() {
       await signOut(auth)

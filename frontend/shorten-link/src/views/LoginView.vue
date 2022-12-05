@@ -61,15 +61,15 @@ export default {
         <label class="label"> </label>
       </div>
       <button
-        class="btn btn-sm rounded-lg bg-sky-500"
+        class="py-1 px-4 font-bold rounded-lg bg-sky-500 text-white"
         @click="login(login_email, login_password)"
       >
         Submit
       </button>
       <div class="mt-4 text-xs">Don't have an account?</div>
-      <button class="text-xs underline underline-offset-1 text-sky-500">
+      <a class="text-xs underline underline-offset-1 text-sky-500" href="/register">
         Register
-      </button>
+      </a>
     </div>
   </div>
 </template>

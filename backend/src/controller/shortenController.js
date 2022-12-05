@@ -59,7 +59,7 @@ shortenController.get('/', checkIfAuthenticated, async (req, res) => {
         const _res = await getShorten(req)
         res.send({
           status: true,
-          message: "Succes create short url",
+          message: "Success get short urls",
           data: _res,
         });
       return _res;
