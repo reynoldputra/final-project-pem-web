@@ -42,9 +42,7 @@
                     class="flex justify-center items-center text-[#08A0F7]"
                     >Back</label
                   >
-                  <label
-                    for="my-modal1"
-                    class=" bg-[#08A0F7] btn text-[#FFFFFF]"
+                  <label for="my-modal1" class="bg-[#08A0F7] btn text-[#FFFFFF]"
                     >Update</label
                   >
                 </div>
@@ -78,6 +76,7 @@
                   <label
                     for="my-modal"
                     class="btn bg-[#EC4F3C] text-[#FFFFFF] w-40"
+                    @click="deleteShorten()"
                     >YES</label
                   >
                 </div>
@@ -107,10 +106,34 @@
 
 <script>
 import Navbar from "../components/Navbar.vue";
+import cookies from "vue-cookies";
+import axios from "axios";
+
+const token = cookies.get("token");
 
 export default {
+  data() {
+    return {
+      alias: this.$route.params.alias,
+    };
+  },
   components: {
     Navbar,
+  },
+  methods: {
+    async deleteShorten() {
+      console.log("test")
+      const _res = await axios.delete(`http://localhost:3001/api/shorten/${this.alias}`, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }).then((res) => {
+        console.log(res)
+      });
+      console.log(_res)
+
+      return _res
+    },
   },
 };
 </script>

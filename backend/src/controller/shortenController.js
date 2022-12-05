@@ -2,7 +2,12 @@ import express from "express";
 import { validationResult } from "express-validator";
 import { checkIfAuthenticated } from "../middleware/guard/authGuard.js";
 import { shoretenValidator } from "../middleware/validator/shortenValidator.js";
-import { createShorten, redirectShorten, getShorten } from "../service/shortenService.js";
+import {
+  createShorten,
+  redirectShorten,
+  getShorten,
+  deleteShorten,
+} from "../service/shortenService.js";
 
 const shortenController = express.Router();
 
@@ -43,8 +48,8 @@ shortenController.get("/in/:alias", async (req, res) => {
   try {
     const _res = await redirectShorten(alias).then((_res) => {
       return res.send({
-        data: _res
-      })
+        data: _res,
+      });
     });
   } catch (err) {
     return res.send({
@@ -54,23 +59,22 @@ shortenController.get("/in/:alias", async (req, res) => {
   }
 });
 
-shortenController.get('/', checkIfAuthenticated, async (req, res) => {
-    try {
-        const _res = await getShorten(req)
-        res.send({
-          status: true,
-          message: "Success get short urls",
-          data: _res,
-        });
-      return _res;
-    } catch (err) {
-      return res.send({
-        status: false,
-        message: err.message,
-      });
-    }
+shortenController.get("/", checkIfAuthenticated, async (req, res) => {
+  try {
+    const _res = await getShorten(req);
+    res.send({
+      status: true,
+      message: "Success get short urls",
+      data: _res,
+    });
+    return _res;
+  } catch (err) {
+    return res.send({
+      status: false,
+      message: err.message,
+    });
   }
-);
+});
 
 shortenController.get("/", checkIfAuthenticated, async (req, res) => {
   try {
@@ -80,6 +84,23 @@ shortenController.get("/", checkIfAuthenticated, async (req, res) => {
       message: "Succes get short urls",
       data: _res,
     });
+  } catch (err) {
+    res.send({
+      status: false,
+      message: err.message,
+    });
+  }
+});
+
+shortenController.delete("/:alias", checkIfAuthenticated, async (req, res) => {
+  const { alias } = req.params;
+  try {
+    const _res = await deleteShorten(alias, req).then(() => {
+      return res.send({
+        message: "berhasil",
+      });
+    });
+    return;
   } catch (err) {
     res.send({
       status: false,

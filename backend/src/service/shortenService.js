@@ -8,6 +8,7 @@ import {
   serverTimestamp,
   setDoc,
   where,
+  deleteDoc,
 } from "firebase/firestore";
 import admin from "../firebase/firebase-admin.js";
 import { db } from "../firebase/firebase.js";
@@ -74,7 +75,7 @@ export const getShorten = async (req) => {
     const _res = await getDocs(q);
     let urls = [];
     _res.forEach((doc) => {
-      urls.push(doc.data())
+      urls.push(doc.data());
     });
     return urls;
   } catch (err) {
@@ -94,3 +95,14 @@ function makeid(length) {
   }
   return result;
 }
+export const deleteShorten = async (alias, req) => {
+  const token = req.headers.authorization;
+  const parsedToken = token.split(" ")[1];
+  const userId = await admin
+    .auth()
+    .verifyIdToken(parsedToken)
+    .then((res) => res.uid);
+  console.log(userId, alias);
+
+  return true;
+};
