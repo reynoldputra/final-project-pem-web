@@ -1,6 +1,6 @@
 import { body } from 'express-validator'
 
-export const shoretenValidator = () => {
+export const shortenValidator = () => {
     return [
         body('alias').optional(),
         body('url').not().isEmpty()

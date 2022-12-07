@@ -34,7 +34,9 @@ export const login = async (user) => {
 
 export const verifyToken = async (req) => {
     try {
-        const userId = await admin.auth().verifyIdToken(req.token).then((res) => res.uid)
+        const userId = await admin.auth().verifyIdToken(req.token).then((res) => {
+            return res.uid
+        })
         const userData = await admin.auth().getUser(userId).then((res) => res)
         if(userData)
             return {
@@ -48,7 +50,7 @@ export const verifyToken = async (req) => {
 }
 
 
-
+ 
 const firebaseLogin = async (user) => {
     try {
         const token = await signInWithEmailAndPassword(auth, user.email, user.password)

@@ -25,6 +25,7 @@
                 <div>
                   Alias
                   <input
+                  v-model="edit.alias"
                     type="text"
                     class="input w-full max-w-xs mt-3 bg-[#4B4B59]"
                   />
@@ -32,6 +33,7 @@
                 <div>
                   URL
                   <input
+                    v-model="edit.url"
                     type="text"
                     class="input w-full max-w-xs mt-3 bg-[#4B4B59]"
                   />
@@ -42,7 +44,10 @@
                     class="flex justify-center items-center text-[#08A0F7]"
                     >Back</label
                   >
-                  <label for="my-modal1" class="bg-[#08A0F7] btn text-[#FFFFFF]"
+                  <label
+                    for="my-modal1"
+                    class="bg-[#08A0F7] btn text-[#FFFFFF]"
+                    @click="updateShorten()"
                     >Update</label
                   >
                 </div>
@@ -83,14 +88,14 @@
               </div>
             </div>
           </div>
-          <h1 class="text-white font-bold text-2xl pt-4">urlaliasname</h1>
+          <h1 class="text-white font-bold text-2xl pt-4">{{ alias }}</h1>
           <p class="pt-4 text-[#08A0F7]">
-            https://www.youtube.com/vfsadfsdfsadfasfsasfas
+            {{ url }}
           </p>
           <div
             class="font-semibold text-white rounded-full py-1 text-center bg-gradient-to-r from-[#957ADC] to-[#4B89DD] w-24 mt-6 shadow-lg"
           >
-            8 Click
+            {{ count }}
           </div>
         </div>
       </div>
@@ -106,15 +111,21 @@
 
 <script>
 import Navbar from "../components/Navbar.vue";
-import cookies from "vue-cookies";
 import axios from "axios";
-
+import cookies from "vue-cookies";
 const token = cookies.get("token");
 
 export default {
   data() {
     return {
       alias: this.$route.params.alias,
+      url: "",
+      count: "",
+      id: "",
+      edit: {
+        url: "",
+        alias: "",
+      },
     };
   },
   components: {
@@ -122,18 +133,57 @@ export default {
   },
   methods: {
     async deleteShorten() {
-      console.log("test")
-      const _res = await axios.delete(`http://localhost:3001/api/shorten/${this.alias}`, {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      }).then((res) => {
-        console.log(res)
-      });
-      console.log(_res)
+      const _res = await axios
+        .delete(`http://localhost:3001/api/shorten/${this.id}`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then((res) => {
+          this.getShorten();
+          console.log(res);
+        });
+      console.log(_res);
 
-      return _res
+      return _res;
     },
+    async updateShorten() {
+      console.log(this.edit);
+      const _res = await axios.patch(`http://localhost:3001/api/shorten/${this.id}`, this.edit, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then((res) => {
+          this.alias = this.edit.alias
+          this.getShorten();
+    
+        });
+      console.log(_res);
+
+      return _res;
+    },
+    getShorten() {
+      axios
+        .get("http://localhost:3001/api/shorten/" + this.alias, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then((res) => {
+          console.log(res.data.data);
+          this.url = res.data.data.url;
+          this.edit.url = res.data.data.url;
+          this.alias = res.data.data.alias;
+          this.edit.alias = res.data.data.alias;
+          this.count = res.data.data.count;
+          this.id = res.data.data.id;
+        });
+    },
+  },
+
+  mounted() {
+    this.getShorten();
   },
 };
 </script>

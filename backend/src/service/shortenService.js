@@ -7,6 +7,7 @@ import {
   query,
   serverTimestamp,
   setDoc,
+  addDoc,
   where,
   deleteDoc,
 } from "firebase/firestore";
@@ -18,8 +19,13 @@ export const createShorten = async (req, token) => {
     if (!req.alias) {
       req.alias = makeid(8);
     } else {
-      const url = await getDoc(doc(db, "shorten", req.alias));
-      if (url.exists()) {
+      const q = query(
+        collection(db, "shorten"),
+        where("alias", "==", req.alias)
+      );
+      const _res = await getDocs(q);
+      // const url = await getDoc(doc(db, "shorten"));
+      if (_res) {
         let httpException = new Error("Alias has been taken");
         httpException.stack = 400;
         throw httpException;
@@ -32,7 +38,7 @@ export const createShorten = async (req, token) => {
       .verifyIdToken(parsedToken)
       .then((res) => res.uid);
 
-    const _res = await setDoc(doc(db, "shorten", req.alias), {
+    const _res = await addDoc(collection(db, "shorten"), {
       ...req,
       count: 0,
       userId: userId,
@@ -49,13 +55,40 @@ export const createShorten = async (req, token) => {
 
 export const redirectShorten = async (alias) => {
   try {
-    const docSnap = await getDoc(doc(db, "shorten", alias));
-    const url = await updateDoc(doc(db, "shorten", alias), {
-      count: docSnap.data().count + 1,
+    const q = query(collection(db, "shorten"), where("alias", "==", alias));
+    let docSnap = {};
+    let docId = "";
+    const _res = await getDocs(q);
+    _res.forEach((data) => {
+      docSnap = data.data();
+      docId = data.id;
+    });
+    // const docSnap = await getDoc(doc(db, "shorten", alias));
+    const url = await updateDoc(doc(db, "shorten", docId), {
+      count: docSnap.count + 1,
     }).then(() => {
-      return docSnap.data().url;
+      return docSnap.url;
     });
     return url;
+  } catch (err) {
+    let httpException = new Error(err.message);
+    httpException.stack = 400;
+    throw httpException;
+  }
+};
+
+export const getUrlbyAlias = async (alias) => {
+  try {
+    const q = query(collection(db, "shorten"), where("alias", "==", alias));
+    const _res = await getDocs(q);
+    let docSnap = {};
+    _res.forEach((data) => {
+      docSnap = {
+        ...data.data(),
+        id: data.id,
+      };
+    });
+    return docSnap;
   } catch (err) {
     let httpException = new Error(err.message);
     httpException.stack = 400;
@@ -75,7 +108,10 @@ export const getShorten = async (req) => {
     const _res = await getDocs(q);
     let urls = [];
     _res.forEach((doc) => {
-      urls.push(doc.data());
+      urls.push({
+        ...doc.data(),
+        id: doc.id,
+      });
     });
     return urls;
   } catch (err) {
@@ -95,14 +131,50 @@ function makeid(length) {
   }
   return result;
 }
-export const deleteShorten = async (alias, req) => {
+export const deleteShorten = async (id, req) => {
   const token = req.headers.authorization;
   const parsedToken = token.split(" ")[1];
   const userId = await admin
     .auth()
     .verifyIdToken(parsedToken)
     .then((res) => res.uid);
-  console.log(userId, alias);
-
+  await deleteDoc(doc(db, "shorten", id), where("userId", "==", userId));
   return true;
+};
+
+export const updateShorten = async (req, id) => {
+  try {
+    if (!req.alias) {
+      req.alias = makeid(8);
+    } else {
+      const q = query(
+        collection(db, "shorten"),
+        where("alias", "==", req.alias)
+      );
+      const _res = await getDocs(q);
+      let tes = false
+      _res.forEach(data => {
+        if(data.data().alias == req.alias) tes = true
+      })
+      if (_res.size && !tes) {
+        console.log(_res);
+        let httpException = new Error("Alias has been taken");
+        httpException.stack = 400;
+        throw httpException;
+      }
+    }
+  
+    const resUp = await updateDoc(doc(db, "shorten", id), req).then((res) =>
+      {
+        
+        return true}
+    );
+
+    return resUp
+  } catch (err) {
+  
+    let httpException = new Error(err.message);
+    httpException.stack = 400;
+    throw httpException;
+  }
 };

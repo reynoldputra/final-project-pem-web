@@ -1,19 +1,21 @@
 import express from "express";
 import { validationResult } from "express-validator";
 import { checkIfAuthenticated } from "../middleware/guard/authGuard.js";
-import { shoretenValidator } from "../middleware/validator/shortenValidator.js";
+import { shortenValidator } from "../middleware/validator/shortenValidator.js";
 import {
   createShorten,
   redirectShorten,
   getShorten,
   deleteShorten,
+  getUrlbyAlias,
+  updateShorten
 } from "../service/shortenService.js";
 
 const shortenController = express.Router();
 
 shortenController.post(
   "/",
-  [checkIfAuthenticated, shoretenValidator()],
+  [checkIfAuthenticated, shortenValidator()],
   async (req, res) => {
     const errors = validationResult(req);
     try {
@@ -35,6 +37,7 @@ shortenController.post(
       });
       return _res;
     } catch (err) {
+      console.log(err); 
       return res.send({
         status: false,
         message: err.message,
@@ -47,6 +50,22 @@ shortenController.get("/in/:alias", async (req, res) => {
   const { alias } = req.params;
   try {
     const _res = await redirectShorten(alias).then((_res) => {
+      return res.send({
+        data: _res,
+      });
+    });
+  } catch (err) {
+    return res.send({
+      status: false,
+      message: err.message,
+    });
+  }
+});
+
+shortenController.get("/:alias", checkIfAuthenticated, async (req, res) => {
+  const { alias } = req.params;
+  try {
+    const _res = await getUrlbyAlias(alias).then((_res) => {
       return res.send({
         data: _res,
       });
@@ -76,26 +95,11 @@ shortenController.get("/", checkIfAuthenticated, async (req, res) => {
   }
 });
 
-shortenController.get("/", checkIfAuthenticated, async (req, res) => {
+shortenController.delete("/:id", checkIfAuthenticated, async (req, res) => {
+  const { id } = req.params;
+  console.log(id);
   try {
-    const _res = await getShorten(req);
-    res.send({
-      status: true,
-      message: "Succes get short urls",
-      data: _res,
-    });
-  } catch (err) {
-    res.send({
-      status: false,
-      message: err.message,
-    });
-  }
-});
-
-shortenController.delete("/:alias", checkIfAuthenticated, async (req, res) => {
-  const { alias } = req.params;
-  try {
-    const _res = await deleteShorten(alias, req).then(() => {
+    const _res = await deleteShorten(id, req).then(() => {
       return res.send({
         message: "berhasil",
       });
@@ -108,5 +112,33 @@ shortenController.delete("/:alias", checkIfAuthenticated, async (req, res) => {
     });
   }
 });
+
+shortenController.patch(
+  "/:id",
+  [checkIfAuthenticated, shortenValidator()],
+  async (req, res) => {
+    const { id } = req.params
+    const errors = validationResult(req);
+    try {
+      if (!errors.isEmpty())
+        return res.send({
+          status: false,
+          message: "Error validation",
+          data: { ...errors },
+        });
+      const _res = updateShorten(req.body, id ).then((_res) => {
+        res.send({
+          status: true,
+          message: "Succes update short url"
+        });
+      });
+    } catch (err) {
+      return res.send({
+        status: false,
+        message: err.message,
+      });
+    }
+  }
+);
 
 export default shortenController;
