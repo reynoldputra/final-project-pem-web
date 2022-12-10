@@ -3,18 +3,41 @@ import { db, auth } from "../firebase/firebase";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import axios from "axios";
 import cookies from "vue-cookies";
+import Alert from "../components/Alert.vue";
 
 const port = 3001;
 export default {
+  components: {
+    Alert,
+  },
+  data() {
+    return {
+      alert: {
+        isShow: false,
+        status: false,
+        msg: "",
+      },
+    };
+  },
   methods: {
+    close() {
+      this.alert.isShow = !this.alert.isShow;
+    },
+    show(status, msg) {
+      this.alert.isShow = !this.alert.isShow;
+      this.alert.status = status;
+      this.alert.msg = msg;
+    },
     async login(email, password) {
-      const res = await signInWithEmailAndPassword(auth, email, password).catch(
-        (err) => {
-          console.log(err.code);
-        }
-      );
-      cookies.set("token", res._tokenResponse.idToken);
-      this.$router.push({ name: "dashboard" });
+      const res = await signInWithEmailAndPassword(auth, email, password)
+        .then((res) => {
+          this.show(true, "Login berhasil");
+          cookies.set("token", res._tokenResponse.idToken);
+          this.$router.push({ name: "dashboard" });
+        })
+        .catch((err) => {
+          this.show(false, err.code);
+        });
     },
   },
 };
@@ -24,6 +47,12 @@ export default {
   <div
     class="overflow-hidden relative flex justify-center items-center h-screen bg-[#1F1D2B]"
   >
+  <Alert
+      :msg="this.alert.msg"
+      :status="this.alert.status"
+      @close="close"
+      :class="this.alert.isShow ? '-translate-y-0' : 'translate-y-32'"
+    />
     <div
       class="absolute w-[577px] h-[577px] rounded-full bg-[#00385B] blur-3xl -top-[188px] -left-[207px] opacity-50"
     ></div>
@@ -61,13 +90,16 @@ export default {
         <label class="label"> </label>
       </div>
       <button
-        class="py-1 px-4 font-bold rounded-lg bg-sky-500 text-white"
+        class="btn btn-sm py-1 px-4 font-bold rounded-lg bg-sky-500 text-white"
         @click="login(login_email, login_password)"
       >
         Submit
       </button>
       <div class="mt-4 text-xs">Don't have an account?</div>
-      <a class="text-xs underline underline-offset-1 text-sky-500" href="/register">
+      <a
+        class="text-xs underline underline-offset-1 text-sky-500"
+        href="/register"
+      >
         Register
       </a>
     </div>

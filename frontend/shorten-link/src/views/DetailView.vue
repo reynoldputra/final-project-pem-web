@@ -1,6 +1,12 @@
 <template>
   <div class="bg-[#1F1D2B]">
     <div class="relative z-0 overflow-hidden h-screen">
+      <Alert
+        :msg="this.alert.msg"
+        :status="this.alert.status"
+        @close="close"
+        :class="this.alert.isShow ? '-translate-y-0' : 'translate-y-32'"
+      />
       <Navbar name="Reynold Putra" class="pt-10"> </Navbar>
       <div
         class="flex flex-col justify-center w-full max-w-[900px] pt-32 mx-auto relative z-20"
@@ -25,7 +31,7 @@
                 <div>
                   Alias
                   <input
-                  v-model="edit.alias"
+                    v-model="edit.alias"
                     type="text"
                     class="input w-full max-w-xs mt-3 bg-[#4B4B59]"
                   />
@@ -111,6 +117,7 @@
 
 <script>
 import Navbar from "../components/Navbar.vue";
+import Alert from "../components/Alert.vue";
 import axios from "axios";
 import cookies from "vue-cookies";
 const token = cookies.get("token");
@@ -118,6 +125,11 @@ const token = cookies.get("token");
 export default {
   data() {
     return {
+      alert: {
+        isShow: false,
+        status: false,
+        msg: "",
+      },
       alias: this.$route.params.alias,
       url: "",
       count: "",
@@ -130,8 +142,18 @@ export default {
   },
   components: {
     Navbar,
+    Alert,
   },
   methods: {
+    close() {
+      this.alert.isShow = !this.alert.isShow;
+    },
+    show(status, msg) {
+      this.alert.isShow = !this.alert.isShow;
+      console.log(this.alert.isShow)
+      this.alert.status = status;
+      this.alert.msg = msg;
+    },
     async deleteShorten() {
       const _res = await axios
         .delete(`http://localhost:3001/api/shorten/${this.id}`, {
@@ -140,27 +162,30 @@ export default {
           },
         })
         .then((res) => {
+          this.show(true, "Shorten link has been deleted successfully");
           this.getShorten();
-          console.log(res);
-        });
-      console.log(_res);
+        })
+        .catch((err)=>{
+          this.show(false, "Error, delete shorten link failed");
+        })
 
       return _res;
     },
     async updateShorten() {
-      console.log(this.edit);
-      const _res = await axios.patch(`http://localhost:3001/api/shorten/${this.id}`, this.edit, {
+      const _res = await axios
+        .patch(`http://localhost:3001/api/shorten/${this.id}`, this.edit, {
           headers: {
             authorization: `Bearer ${token}`,
           },
         })
         .then((res) => {
-          this.alias = this.edit.alias
+          this.alias = this.edit.alias;
+          this.show(true, "Shorten link has been updated!");
           this.getShorten();
-    
-        });
-      console.log(_res);
-
+        })
+        .catch((err)=>{
+          this.show(false, "Error, update shorten link failed");
+        })
       return _res;
     },
     getShorten() {

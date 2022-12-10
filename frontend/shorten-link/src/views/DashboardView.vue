@@ -1,5 +1,6 @@
 <template>
-  <div class="relative flex justify-center flex-col overflow-hidden">
+  <div class="relative flex justify-center flex-col overflow-hidden h-full">
+    <Alert  :msg="this.alert.msg" :status="this.alert.status"  @close="close" :class="this.alert.isShow ? '-translate-y-0' : 'translate-y-32'"/>
     <Navbar :name="this.nama_user" @logout="logout" class="pt-10"> </Navbar>
     <div
       class="flex flex-col justify-center w-full max-w-[900px] pt-32 mx-auto"
@@ -32,9 +33,13 @@
         URL LIST
       </div>
       <div class="bg-[#252836] mt-8 mb-24 rounded-xl shadow-xl px-12 py-10">
-        <div class="grid grid-cols-6 py-3" v-for="(link, index) in links" :key="index">
+        <div
+          class="grid grid-cols-6 py-3"
+          v-for="(link, index) in links"
+          :key="index"
+        >
           <div
-          class="text-white col-span-2 font-normal tracking-wider flex"
+            class="text-white col-span-2 font-normal tracking-wider flex cursor-pointer"
             @click="redirectLinks(link.alias)"
           >
             <p class="self-center">{{ link.alias }}</p>
@@ -45,11 +50,11 @@
             </p>
           </div>
           <div
-          class="font-bold text-white text-center rounded-2xl bg-[#957ADC] px-6 py-1 w-fit col-span-1 tracking-wider cursor-pointer"
-          @click="$router.push(`/dashboard/url/${link.alias}`)"
+            class="font-bold text-white text-center rounded-2xl bg-[#957ADC] px-6 py-1 w-fit col-span-1 tracking-wider cursor-pointer"
+            @click="$router.push(`/dashboard/url/${link.alias}`)"
           >
-          <p class="self-center">Detail</p>
-        </div>
+            <p class="self-center">Detail</p>
+          </div>
         </div>
       </div>
     </div>
@@ -66,26 +71,40 @@
 import axios from "axios";
 import cookies from "vue-cookies";
 import Navbar from "../components/Navbar.vue";
-import {auth} from '../firebase/firebase'
-import { signOut } from '@firebase/auth';
-
+import { auth } from "../firebase/firebase";
+import { signOut } from "@firebase/auth";
+import Alert from "../components/Alert.vue";
 const port = 3001;
 const token = cookies.get("token");
 
 export default {
   components: {
     Navbar,
+    Alert
   },
   data() {
     return {
+      alert:{
+        isShow: false,
+        status: false,
+        msg:''
+      },
       nama_user: "Ahnaf Musyaffa",
       links: [],
     };
   },
-  mounted(){
-    this.getLinks()
+  beforeMount() {
+    this.getLinks();
   },
   methods: {
+    close(){
+      this.alert.isShow = !this.alert.isShow
+    },
+    show(status, msg) {
+      this.alert.isShow = !this.alert.isShow
+      this.alert.status = status;
+      this.alert.msg = msg;
+    },
     async generateLink(url, shorten) {
       const res = await axios
         .post(
@@ -101,22 +120,23 @@ export default {
           }
         )
         .catch();
-        this.getLinks()
+      console.log(res)
+      this.show(res.data.status, res.data.message);
+      this.getLinks();
     },
     async getLinks() {
       const res = await axios
-        .get(`http://localhost:${port}/api/shorten`,{
-          headers:{
-            authorization: `Bearer ${token}`
-          }
+        .get(`http://localhost:${port}/api/shorten`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
         })
         .catch();
-
-      this.links.push(...res.data.data)
-
+      this.links = [];
+      this.links.push(...res.data.data);
     },
     async redirectLinks(alias) {
-      this.$router.push("/in/"+alias)
+      this.$router.push("/in/" + alias);
     },
     async logout() {
       await signOut(auth)

@@ -1,8 +1,29 @@
 <script>
 import axios from "axios";
+import Alert from "../components/Alert.vue";
 const port = 3001;
 export default {
+  components:{
+    Alert
+  },
+  data() {
+    return {
+      alert: {
+        isShow: false,
+        status: false,
+        msg: "",
+      },
+    };
+  },
   methods: {
+    close() {
+      this.alert.isShow = !this.alert.isShow;
+    },
+    show(status, msg) {
+      this.alert.isShow = !this.alert.isShow;
+      this.alert.status = status;
+      this.alert.msg = msg;
+    },
     async register(username, gmail, password) {
       const res = await axios
         .post(`http://localhost:3001/api/auth/register`, {
@@ -11,8 +32,12 @@ export default {
           password: password,
         })
         .catch();
-        if(res.data.status == true) this.$router.push({name: 'login'})
+        console.log(res.data)
+        this.show(res.data.status, res.data.message)
+        if(res.data.status == true) setTimeout(()=>(this.$router.push({name: 'login'})),2000)
     },
+  
+
   },
 };
 </script>
@@ -21,6 +46,13 @@ export default {
   <div
     class="overflow-hidden relative flex justify-center items-center h-screen bg-[#1F1D2B]"
   >
+  <Alert
+  
+      :msg="this.alert.msg"
+      :status="this.alert.status"
+      @close="close"
+      :class="this.alert.isShow ? '-translate-y-0' : 'translate-y-32'"
+    />
     <div
       class="absolute w-[577px] h-[577px] rounded-full bg-[#00385B] blur-3xl -top-[188px] -left-[207px] opacity-50"
     ></div>

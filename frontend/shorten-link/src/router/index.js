@@ -5,6 +5,13 @@ import DashboardView from '../views/DashboardView.vue'
 import DetailView from '../views/DetailView.vue'
 import RedirectView from '../views/RedirectView.vue'
 import checkAuth from '../middleware/auth';
+
+async function beforeEnter(to, from, next){
+  const isVerified = await checkAuth();
+  if(!isVerified) return router.push('/login');
+  else return next();
+}
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -27,16 +34,13 @@ const router = createRouter({
       path: "/dashboard",
       name:"dashboard",
       component: DashboardView,
-      async beforeEnter(to, from, next){
-         const isVerified = await checkAuth()
-         if(!isVerified) return router.push('/login')
-         else return next()
-      },
+      beforeEnter,
     },
     {
       path: "/dashboard/url/:alias",
       name:"url",
       component: DetailView,
+      beforeEnter,
     },
     {
       path: "/in/:alias",

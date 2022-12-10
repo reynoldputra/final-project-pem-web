@@ -152,27 +152,23 @@ export const updateShorten = async (req, id) => {
         where("alias", "==", req.alias)
       );
       const _res = await getDocs(q);
-      let tes = false
-      _res.forEach(data => {
-        if(data.data().alias == req.alias) tes = true
-      })
+      let tes = false;
+      _res.forEach((data) => {
+        if (data.data().alias == req.alias) tes = true;
+      });
       if (_res.size && !tes) {
-        console.log(_res);
         let httpException = new Error("Alias has been taken");
         httpException.stack = 400;
         throw httpException;
       }
     }
-  
-    const resUp = await updateDoc(doc(db, "shorten", id), req).then((res) =>
-      {
-        
-        return true}
-    );
 
-    return resUp
+    const resUp = await updateDoc(doc(db, "shorten", id), req).then((res) => {
+      return true;
+    });
+
+    return resUp;
   } catch (err) {
-  
     let httpException = new Error(err.message);
     httpException.stack = 400;
     throw httpException;
