@@ -90,14 +90,14 @@ export default {
         <label class="label"> </label>
       </div>
       <button
-        class="btn btn-sm py-1 px-4 font-bold rounded-lg bg-sky-500 text-white"
+        class="py-1 px-4 font-bold rounded-lg bg-sky-500 text-white"
         @click="login(login_email, login_password)"
       >
         Submit
       </button>
-      <div class="mt-4 text-xs">Don't have an account?</div>
+      <div class="mt-4 text-sm">Don't have an account?</div>
       <a
-        class="text-xs underline underline-offset-1 text-sky-500"
+        class="text-sm underline underline-offset-1 text-sky-500"
         href="/register"
       >
         Register

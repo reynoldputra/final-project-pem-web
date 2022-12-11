@@ -101,13 +101,13 @@ export default {
         <label class="label"> </label>
       </div>
       <button
-        class="btn btn-sm rounded-lg bg-sky-500"
+        class="py-1 px-4 text-white rounded-lg bg-sky-500"
         @click="register(username, gmail, password)"
       >
-        create
+        Create
       </button>
-      <div class="mt-4 text-xs">Already have an account?</div>
-      <button class="text-xs underline underline-offset-1 text-sky-500">
+      <div class="mt-4 text-sm">Already have an account?</div>
+      <button class="text-sm underline underline-offset-1 text-sky-500">
         Log in
       </button>
     </div>
