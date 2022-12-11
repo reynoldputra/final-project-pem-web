@@ -8,6 +8,9 @@ export default {
   },
   data() {
     return {
+      username:"",
+      gmail:"",
+      password:"",
       alert: {
         isShow: false,
         status: false,
@@ -32,12 +35,9 @@ export default {
           password: password,
         })
         .catch();
-        console.log(res.data)
         this.show(res.data.status, res.data.message)
         if(res.data.status == true) setTimeout(()=>(this.$router.push({name: 'login'})),2000)
     },
-  
-
   },
 };
 </script>
