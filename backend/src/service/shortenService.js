@@ -91,8 +91,12 @@ export const getUrlbyAlias = async (alias) => {
     const _res = await getDocs(q);
     let docSnap = {};
     let times = []
-    let today = Timestamp.now().seconds
-    let roundMidnight = (new Date(today*1000).setHours(24,0,0,0))/1000
+    let d = Timestamp.now().seconds
+    let date = new Date(d1000)
+    date.setHours(date.getHours() + Math.round(date.getMinutes()/60));
+    date.setMinutes(0, 0, 0);
+    let today = date.getTime()/1000
+    let roundMidnight = (new Date(d1000).setHours(24,0,0,0))/1000
     console.log(roundMidnight);
     _res.forEach((data) => {
       data.data().clickTimestamp.forEach(time => {

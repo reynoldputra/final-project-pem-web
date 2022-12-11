@@ -34,17 +34,17 @@ export const login = async (user) => {
 
 export const verifyToken = async (req) => {
     try {
-        const userId = await admin.auth().verifyIdToken(req.token).then((res) => {
-            return res.uid
-        })
-        const userData = await admin.auth().getUser(userId).then((res) => res)
-        if(userData)
+        const userId = await admin.auth().verifyIdToken(req.token)
+        const userData = await admin.auth().getUser(userId.uid)
             return {
                 username : userData.displayName
-            }
+            } 
     } catch (err) { 
-        let httpException = new Error(err.message)
-        httpException.stack = 400
+        let message = ""
+        if(err.message) message = err.message
+        else message = "Token error"
+        let httpException = new Error(message)
+        httpException.stack = 401
         throw httpException
     }
 }
