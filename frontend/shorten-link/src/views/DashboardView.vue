@@ -6,11 +6,10 @@
       class="flex flex-col justify-center w-full max-w-[900px] pt-32 mx-auto"
     >
       <input
-        type="text"
+        type="url"
         class="rounded-2xl text-base text-white py-4 px-10 bg-[#252836] focus:outline-2 focus:outline-[#08A0F7] active:outline-2 active:outline-[#08A0F7] hover:outline-1 hover:outline-[#08A0F7] outline-none w-full shadow-lg"
         name=""
         id=""
-        placeholder="Paste url ..."
         v-model="url"
       />
       <div class="flex justify-between pt-7">
@@ -74,7 +73,10 @@ import Navbar from "../components/Navbar.vue";
 import { auth } from "../firebase/firebase";
 import { signOut } from "@firebase/auth";
 import Alert from "../components/Alert.vue";
+import {validateURL} from "../lib/validation"
 const port = 3001;
+
+const username = cookies.get("username");
 const token = cookies.get("token");
 
 export default {
@@ -85,13 +87,13 @@ export default {
   data() {
     return {
       shorten:"",
-      url:"",
+      url:"https://",
       alert:{
         isShow: false,
         status: false,
         msg:''
       },
-      nama_user: "Ahnaf Musyaffa",
+      nama_user: username,
       links: [],
     };
   },
@@ -108,7 +110,10 @@ export default {
       this.alert.msg = msg;
     },
     async generateLink(url, shorten) {
-      console.log(url, shorten)
+      if(!validateURL(url)){
+        this.show(false, "URL tidak valid")
+        return;
+      }
       const res = await axios
         .post(
           `http://localhost:${port}/api/shorten`,
@@ -123,7 +128,6 @@ export default {
           }
         )
         .catch();
-      console.log(res)
       this.show(res.data.status, res.data.message);
       this.getLinks();
     },

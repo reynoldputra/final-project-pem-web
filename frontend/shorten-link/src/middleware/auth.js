@@ -4,12 +4,13 @@ import cookies from "vue-cookies";
 export default async function checkAuth(){
     if(cookies.isKey('token')){
         const token = cookies.get('token')
+        
         const res = await axios.post(`http://localhost:3001/api/auth/verifytoken`,{
-           token: token
+           token: token,
         }).catch((Err)=>{
             console.log(Err)
         })
-        console.log(res);
+        cookies.set('username', res.data.data.username)
         if(res.data.status == true) return true        
     } else return false
 }
