@@ -8,9 +8,11 @@ import {
   addDoc,
   where,
   deleteDoc,
+  Timestamp,
 } from "firebase/firestore";
 import admin from "../firebase/firebase-admin.js";
 import { db } from "../firebase/firebase.js";
+import * as group from 'groupbytime'
 
 export const createShorten = async (req, token) => {
   try {
@@ -41,6 +43,7 @@ export const createShorten = async (req, token) => {
       count: 0,
       userId: userId,
       timestamp: serverTimestamp(),
+      clickTimestamp: []
     }).then(() => req);
 
     return _res;
@@ -61,9 +64,16 @@ export const redirectShorten = async (alias) => {
       docSnap = data.data();
       docId = data.id;
     });
+
+
+    const time = Timestamp.now()
+
+    docSnap.clickTimestamp.push(time)
+    console.log(docSnap);
     // const docSnap = await getDoc(doc(db, "shorten", alias));
     const url = await updateDoc(doc(db, "shorten", docId), {
       count: docSnap.count + 1,
+      clickTimestamp: docSnap.clickTimestamp
     }).then(() => {
       return docSnap.url;
     });
@@ -80,12 +90,68 @@ export const getUrlbyAlias = async (alias) => {
     const q = query(collection(db, "shorten"), where("alias", "==", alias));
     const _res = await getDocs(q);
     let docSnap = {};
+    let times = []
+    let today = Timestamp.now().seconds
+    let roundMidnight = (new Date(today*1000).setHours(24,0,0,0))/1000
+    console.log(roundMidnight);
     _res.forEach((data) => {
+      data.data().clickTimestamp.forEach(time => {
+        times.push({
+          data : "data",
+          ts: time.seconds
+        })
+      })
+      const parsed = JSON.stringify(times)
+      console.log(parsed);
+      console.log(JSON.parse(parsed));
+      const enamjam = 21600;
+      const tigahari = 259200;
+    
+      const groupHours = group.groupBy(JSON.parse(parsed), today-enamjam, today , "ts", 60*60)
+      console.log(groupHours);
+      const parsedGroupHours = []
+      Object.keys(groupHours).forEach(key => {
+        if(groupHours[key].length){
+          const jam = new Date(parseInt(key * 1000)).getHours()
+          const selisih = jam+":00 - " + (parseInt(jam)+1) + ":00"
+          parsedGroupHours.push({
+            time : selisih,
+            count : groupHours[key].length
+          })
+        }
+      })
+
+      const parsedgroupDay = []
+      console.log(roundMidnight);
+      console.log(today);
+      const groupDay = group.groupBy(JSON.parse(parsed), roundMidnight-tigahari, roundMidnight , "ts", 60*1440)
+      console.log(groupDay);
+      Object.keys(groupDay).forEach(key => {
+        if(groupDay[key].length){
+          const date = new Date(parseInt(key * 1000)).toDateString()
+          parsedgroupDay.push({
+            date : date,
+            count : groupDay[key].length
+          })
+        }
+      })
+
+      console.log(parsedGroupHours);
+      console.log(parsedgroupDay);
+
+      
+
       docSnap = {
         ...data.data(),
         id: data.id,
+        countClick : {
+          groupByDay : parsedgroupDay,
+          groupByHour : parsedGroupHours
+        }
       };
     });
+    delete docSnap.clickTimestamp
+    console.log(docSnap);
     return docSnap;
   } catch (err) {
     let httpException = new Error(err.message);
