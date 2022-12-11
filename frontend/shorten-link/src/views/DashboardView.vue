@@ -1,6 +1,6 @@
 <template>
   <div class="relative flex justify-center flex-col overflow-hidden min-h-screen">
-    <Alert  :msg="this.alert.msg" :status="this.alert.status"  @close="close" :class="this.alert.isShow ? '-translate-y-0' : 'translate-y-32'"/>
+    <Alert :msg="this.alert.msg" :status="this.alert.status"  @close="close" :class="this.alert.isShow ? '-translate-y-0' : 'translate-y-32'"/>
     <Navbar :name="this.nama_user" @logout="logout" class="pt-10"> </Navbar>
     <div
       class="flex flex-col justify-center w-full max-w-[900px] pt-32 mx-auto"
@@ -58,10 +58,10 @@
       </div>
     </div>
     <div
-      class="blur-[100px] w-[625px] h-[625px] bg-[#957ADC66] rounded-full -right-44 -bottom-72 -z-10 opacity-60 absolute"
+      class="blur-[100px] w-[625px] h-[625px]  animate-pulse bg-[#957ADC66] rounded-full -right-44 -bottom-72 -z-10 opacity-60 absolute"
     ></div>
     <div
-      class="w-[577px] h-[577px] rounded-full bg-[#00385B] blur-[100px] -top-28 -left-44 -z-10 opacity-60 absolute"
+      class="w-[577px] h-[577px] rounded-full  animate-pulse bg-[#00385B] blur-[100px] -top-28 -left-44 -z-10 opacity-60 absolute"
     ></div>
   </div>
 </template>
@@ -76,7 +76,7 @@ import Alert from "../components/Alert.vue";
 import {validateURL} from "../lib/validation"
 const port = 3001;
 
-const username = cookies.get("username");
+
 const token = cookies.get("token");
 
 export default {
@@ -93,11 +93,13 @@ export default {
         status: false,
         msg:''
       },
-      nama_user: username,
+      nama_user: null,  
       links: [],
     };
   },
   beforeMount() {
+    const username = cookies.get("username");
+    this.nama_user = username;
     this.getLinks();
   },
   methods: {
@@ -111,7 +113,7 @@ export default {
     },
     async generateLink(url, shorten) {
       if(!validateURL(url)){
-        this.show(false, "URL tidak valid")
+        this.show(false, "URL is not valid")
         return;
       }
       const res = await axios
@@ -149,6 +151,7 @@ export default {
       await signOut(auth)
         .then(() => {
           cookies.remove("token");
+          cookies.remove("username");
           this.$router.push({ name: "login" });
         })
         .catch((err) => console.log(err));

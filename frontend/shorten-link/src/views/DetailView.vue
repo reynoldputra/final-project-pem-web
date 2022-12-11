@@ -1,18 +1,18 @@
 <template>
   <div class="bg-[#1F1D2B]">
-    <div class="relative z-0 overflow-hidden h-screen">
+    <div class="relative z-0 overflow-hidden min-h-screen pb-16">
       <Alert
         :msg="this.alert.msg"
         :status="this.alert.status"
         @close="close"
         :class="this.alert.isShow ? '-translate-y-0' : 'translate-y-32'"
       />
-      <Navbar :name="this.nama_user" class="pt-10"> </Navbar>
+      <Navbar :name="this.nama_user" @logout="logout" class="pt-10"> </Navbar>
       <div
         class="flex flex-col justify-center w-full max-w-[900px] pt-32 mx-auto relative z-20"
       >
         <div
-          class="bg-[#353551] w-[800px] shadow-xl rounded-xl py-6 px-20 mx-auto"
+          class="bg-[#353551] w-[800px] shadow-xl rounded-xl px-14 py-10 mx-auto "
         >
           <div class="flex justify-between pt-4">
             <div>
@@ -117,13 +117,40 @@
               {{ count }}
             </div>
           </div>
+          <div class="flex flex-col bg-[#2d2d42] rounded-lg p-4 gap-y-3 shadow-lg ">
+            <div class="text-white font-bold text-2xl">Activites</div>
+            <div class="grid grid-cols-2 justify-between gap-x-8">
+              <div >
+                <div class="text-lg text-white ">
+                  <div class="pb-2 text-slate-50 font-semibold">
+                  Group by day
+                </div>
+                  <div class="flex justify-between pb-1" v-for="(gday, index) in groupbyDay" :key="index">
+                    <div>{{ gday.date }}</div>
+                    <div class="text-blue-400 pr-4">{{ gday.count }}</div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="text-lg text-white">
+                  <div class="pb-2 text-slate-50 font-semibold">
+                  Group by hours
+                </div>
+                  <div class="flex gap-4 justify-between pb-1" v-for="(ghour, index) in groupbyHour" :key="index">
+                    <div>{{ ghour.time }}</div>
+                    <div class="text-blue-400 pr-4">{{ ghour.count }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div
-        class="blur-[100px] w-[625px] h-[625px] bg-[#957ADC66] rounded-full -right-44 -bottom-72 -z-10 opacity-60 absolute"
+        class="blur-[100px] w-[625px] h-[625px]  animate-pulse bg-[#957ADC66] rounded-full -right-44 -bottom-72 -z-10 opacity-60 absolute"
       ></div>
       <div
-        class="w-[577px] h-[577px] rounded-full bg-[#00385B] blur-[100px] -top-28 -left-44 -z-10 opacity-60 absolute"
+        class="w-[577px] h-[577px] rounded-full  animate-pulse bg-[#00385B] blur-[100px] -top-28 -left-44 -z-10 opacity-60 absolute"
       ></div>
     </div>
   </div>
@@ -133,9 +160,13 @@
 import Navbar from "../components/Navbar.vue";
 import Alert from "../components/Alert.vue";
 import axios from "axios";
+import { auth } from "../firebase/firebase";
+import { signOut } from "@firebase/auth";
 import cookies from "vue-cookies";
-const token = cookies.get("token");
-const username = cookies.get("username");
+
+const token = await cookies.get("token");
+const username = await cookies.get("username");
+
 export default {
   data() {
     return {
@@ -153,6 +184,8 @@ export default {
         url: "",
         alias: "",
       },
+      groupbyDay: [],
+      groupbyHour: [],
     };
   },
   components: {
@@ -177,12 +210,10 @@ export default {
           },
         })
         .catch((e) => {
-                this.show(false, "Error, delete shorten link failed");
-
+          this.show(false, "Error, delete shorten link failed");
         });
       this.show(true, "Shorten link has been deleted successfully");
-      setTimeout(() => this.$router.push({ name: "dashboard" }), 2000);
-      
+      setTimeout(() => this.$router.push({ name: "dashboard" }), 1500);
     },
     async updateShorten() {
       const _res = await axios
@@ -209,14 +240,29 @@ export default {
           },
         })
         .then((res) => {
-          // console.log(res.data.data);
           this.url = res.data.data.url;
           this.edit.url = res.data.data.url;
           this.alias = res.data.data.alias;
           this.edit.alias = res.data.data.alias;
           this.count = res.data.data.count;
           this.id = res.data.data.id;
+          this.groupbyDay.push(
+            ...res.data.data.countClick.groupByDay
+          );
+          this.groupbyHour.push(
+            ...res.data.data.countClick.groupByHour
+          );
+ 
         });
+    },
+    async logout() {
+      await signOut(auth)
+        .then(() => {
+          cookies.remove("token");
+          cookies.remove("username");
+          this.$router.push({ name: "login" });
+        })
+        .catch((err) => console.log(err));
     },
   },
 

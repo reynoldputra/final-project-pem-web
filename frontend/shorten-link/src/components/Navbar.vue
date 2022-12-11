@@ -1,5 +1,4 @@
 <script>
-
 import cookies from 'vue-cookies'
 export default {
   props: ["name"],

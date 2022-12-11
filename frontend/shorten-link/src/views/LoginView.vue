@@ -12,8 +12,8 @@ export default {
   },
   data() {
     return {
-      login_email:"",
-      login_password:"",
+      login_email: "",
+      login_password: "",
       alert: {
         isShow: false,
         status: false,
@@ -33,11 +33,12 @@ export default {
     async login(email, password) {
       const res = await signInWithEmailAndPassword(auth, email, password)
         .then((res) => {
-          this.show(true, "Login berhasil");
-          cookies.set("token", res._tokenResponse.idToken);
-          this.$router.push({ name: "dashboard" });
+            this.show(true, "Login berhasil");
+            cookies.set("token", res._tokenResponse.idToken)
+            this.$router.push('/dashboard')
         })
         .catch((err) => {
+          console.log(err)
           this.show(false, err.code);
         });
     },
@@ -49,18 +50,18 @@ export default {
   <div
     class="overflow-hidden relative flex justify-center items-center h-screen bg-[#1F1D2B]"
   >
-  <Alert
+    <Alert
       :msg="this.alert.msg"
       :status="this.alert.status"
       @close="close"
       :class="this.alert.isShow ? '-translate-y-0' : 'translate-y-32'"
     />
     <div
-      class="absolute w-[577px] h-[577px] rounded-full bg-[#00385B] blur-3xl -top-[188px] -left-[207px] opacity-50"
+      class="absolute w-[577px] animate-pulse h-[577px] rounded-full bg-[#00385B] blur-[100px] -top-[188px] -left-[207px] opacity-60"
     ></div>
 
     <div
-      class="absolute w-[577px] h-[577px] rounded-full bg-[#957ADC] blur-3xl opacity-25 -bottom-[188px] -right-[207px]"
+      class="absolute w-[577px] animate-pulse h-[577px] rounded-full bg-[#957ADC] blur-[100px] opacity-60 -bottom-[188px] -right-[207px]"
     ></div>
 
     <div

@@ -4,7 +4,7 @@
             
             <div class="relative z-100 w-screen h-screen flex flex-col justify-center items-center">
                 <lottie-player src="../../public/gif/link.json" background="transparent" speed="1" style="width: 200px; height: 200px;" loop autoplay></lottie-player>
-                <h1 class="text-[#08A0F7] mt-10"><span class="text-white font-bold">Youe are being</span> redirected ... </h1>
+                <h1 class="text-[#08A0F7] mt-10"><span class="text-white font-bold">You are being</span> redirected to {{ this.alias }} </h1>
             </div>
             
             <div
@@ -28,13 +28,11 @@ export default {
         }
     },  
     async mounted() {
-        console.log(this.alias)
         const res = await axios
         .get(`http://127.0.0.1:${this.port}/api/shorten/in/${this.alias}`)
         .catch((err) => {
           console.log(err);
         });
-        console.log(res.data.data)
         setTimeout(() => {
             window.location.assign(`${res.data.data}`);
         }, 3000)
