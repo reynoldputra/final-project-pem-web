@@ -106,6 +106,7 @@ export default {
       this.alert.msg = msg;
     },
     async generateLink(url, shorten) {
+      console.log(url, shorten)
       const res = await axios
         .post(
           `http://localhost:${port}/api/shorten`,
