@@ -7,7 +7,7 @@
         @close="close"
         :class="this.alert.isShow ? '-translate-y-0' : 'translate-y-32'"
       />
-      <Navbar name="Reynold Putra" class="pt-10"> </Navbar>
+      <Navbar :name="this.nama_user" class="pt-10"> </Navbar>
       <div
         class="flex flex-col justify-center w-full max-w-[900px] pt-32 mx-auto relative z-20"
       >
@@ -130,10 +130,11 @@ import Alert from "../components/Alert.vue";
 import axios from "axios";
 import cookies from "vue-cookies";
 const token = cookies.get("token");
-
+const username = cookies.get("username");
 export default {
   data() {
     return {
+      nama_user: username,
       alert: {
         isShow: false,
         status: false,
