@@ -23,7 +23,7 @@ shortenController.post(
         return res.send({
           status: false,
           message: "Error validation",
-          data: { ...errors },
+          data: { ...errors }, 
         });
       const _res = await createShorten(
         req.body,
@@ -96,16 +96,19 @@ shortenController.get("/", checkIfAuthenticated, async (req, res) => {
 });
 
 shortenController.delete("/:id", checkIfAuthenticated, async (req, res) => {
-  const { id } = req.params;
+  console.log("test");
+  const id = req.params.id;
   console.log(id);
   try {
-    const _res = await deleteShorten(id, req).then(() => {
-      return res.send({
-        message: "berhasil",
+    const _res = await deleteShorten(id, req)
+    if(_res){
+      res.send({
+        status : true,
+        message: "berhasil"
       });
-    });
-    return;
+    }
   } catch (err) {
+    console.log(err);
     res.send({
       status: false,
       message: err.message,
@@ -126,14 +129,14 @@ shortenController.patch(
           message: "Error validation",
           data: { ...errors },
         });
-      const _res = updateShorten(req.body, id ).then((_res) => {
-        res.send({
-          status: true,
-          message: "Succes update short url"
-        });
-      });
+      const _res = await updateShorten(req.body, id )
+        if(_res)
+          res.send({
+            status: true,
+            message: "Succes update short url"
+          });
     } catch (err) {
-      return res.send({
+      return res.status(400).send({
         status: false,
         message: err.message,
       });
