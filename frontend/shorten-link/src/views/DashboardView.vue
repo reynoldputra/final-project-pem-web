@@ -1,6 +1,13 @@
 <template>
-  <div class="relative flex justify-center flex-col overflow-hidden min-h-screen">
-    <Alert :msg="this.alert.msg" :status="this.alert.status"  @close="close" :class="this.alert.isShow ? '-translate-y-0' : 'translate-y-32'"/>
+  <div
+    class="relative flex justify-center flex-col overflow-hidden min-h-screen"
+  >
+    <Alert
+      :msg="this.alert.msg"
+      :status="this.alert.status"
+      @close="close"
+      :class="this.alert.isShow ? '-translate-y-0' : 'translate-y-32'"
+    />
     <Navbar :name="this.nama_user" @logout="logout" class="pt-10"> </Navbar>
     <div
       class="flex flex-col justify-center w-full max-w-[900px] pt-32 mx-auto"
@@ -58,10 +65,10 @@
       </div>
     </div>
     <div
-      class="blur-[100px] w-[625px] h-[625px]  animate-pulse bg-[#957ADC66] rounded-full -right-44 -bottom-72 -z-10 opacity-60 absolute"
+      class="blur-[100px] w-[625px] h-[625px] animate-pulse bg-[#957ADC66] rounded-full -right-44 -bottom-72 -z-10 opacity-60 absolute"
     ></div>
     <div
-      class="w-[577px] h-[577px] rounded-full  animate-pulse bg-[#00385B] blur-[100px] -top-28 -left-44 -z-10 opacity-60 absolute"
+      class="w-[577px] h-[577px] rounded-full animate-pulse bg-[#00385B] blur-[100px] -top-28 -left-44 -z-10 opacity-60 absolute"
     ></div>
   </div>
 </template>
@@ -73,24 +80,24 @@ import Navbar from "../components/Navbar.vue";
 import { auth } from "../firebase/firebase";
 import { signOut } from "@firebase/auth";
 import Alert from "../components/Alert.vue";
-import {validateURL} from "../lib/validation"
+import { validateURL } from "../lib/validation";
 const port = 3001;
 export default {
   components: {
     Navbar,
-    Alert
+    Alert,
   },
   data() {
     return {
-      shorten:"",
-      url:"https://",
-      alert:{
+      shorten: "",
+      url: "https://",
+      alert: {
         isShow: false,
         status: false,
-        msg:''
+        msg: "",
       },
-      token:cookies.get("token"),
-      nama_user: cookies.get("username"),  
+      token: cookies.get("token"),
+      nama_user: cookies.get("username"),
       links: [],
     };
   },
@@ -98,17 +105,17 @@ export default {
     this.getLinks();
   },
   methods: {
-    close(){
-      this.alert.isShow = !this.alert.isShow
+    close() {
+      this.alert.isShow = !this.alert.isShow;
     },
     show(status, msg) {
-      this.alert.isShow = !this.alert.isShow
+      this.alert.isShow = !this.alert.isShow;
       this.alert.status = status;
       this.alert.msg = msg;
     },
     async generateLink(url, shorten) {
-      if(!validateURL(url)){
-        this.show(false, "URL is not valid")
+      if (!validateURL(url)) {
+        this.show(false, "URL is not valid");
         return;
       }
       const res = await axios
