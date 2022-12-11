@@ -150,7 +150,7 @@ export default {
     },
     show(status, msg) {
       this.alert.isShow = !this.alert.isShow;
-      console.log(this.alert.isShow)
+      console.log(this.alert.isShow);
       this.alert.status = status;
       this.alert.msg = msg;
     },
@@ -165,9 +165,9 @@ export default {
           this.show(true, "Shorten link has been deleted successfully");
           this.getShorten();
         })
-        .catch((err)=>{
+        .catch((err) => {
           this.show(false, "Error, delete shorten link failed");
-        })
+        });
 
       return _res;
     },
@@ -183,9 +183,9 @@ export default {
           this.show(true, "Shorten link has been updated!");
           this.getShorten();
         })
-        .catch((err)=>{
+        .catch((err) => {
           this.show(false, "Error, update shorten link failed");
-        })
+        });
       return _res;
     },
     getShorten() {
