@@ -16,7 +16,11 @@
         >
           <div class="flex justify-between pt-4">
             <div>
-              <img class="w-6 cursor-pointer" @click="$router.push('/dashboard')" src="../../public/img/detail/back.png" />
+              <img
+                class="w-6 cursor-pointer"
+                @click="$router.push('/dashboard')"
+                src="../../public/img/detail/back.png"
+              />
             </div>
             <div class="flex gap-2">
               <label for="my-modal1" class="cursor-pointer"
@@ -29,7 +33,10 @@
                   class="modal-box w-[388px] h-[468px] bg-[#212121 ] p-10 flex flex-col justify-between"
                 >
                   <h3 class="font-bold text-lg flex gap-2 text-[#08A0F7]">
-                    <img src="../../public/img/detail/editblueIcon.png" alt="" />
+                    <img
+                      src="../../public/img/detail/editblueIcon.png"
+                      alt=""
+                    />
                     Update link
                   </h3>
                   <div>
@@ -97,18 +104,16 @@
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
-            <div class="py-8">
-
-              <h1 class="text-white font-bold text-2xl pt-4">{{ alias }}</h1>
-              <p class="pt-4 text-[#08A0F7]">
-                {{ url }}
-              </p>
-              <div
+          <div class="py-8">
+            <h1 class="text-white font-bold text-2xl pt-4">{{ alias }}</h1>
+            <p class="pt-4 text-[#08A0F7]">
+              {{ url }}
+            </p>
+            <div
               class="font-semibold text-white rounded-full py-1 text-center bg-gradient-to-r from-[#957ADC] to-[#4B89DD] w-24 mt-6 shadow-lg"
-              >
+            >
               {{ count }}
             </div>
           </div>
@@ -164,21 +169,19 @@ export default {
       this.alert.msg = msg;
     },
     async deleteShorten() {
-      const _res = await axios
+      const res = axios
         .delete(`http://localhost:3001/api/shorten/${this.id}`, {
           headers: {
             authorization: `Bearer ${token}`,
           },
         })
-        .then((res) => {
-          this.show(true, "Shorten link has been deleted successfully");
-          this.$router.push("/dashboard")
-        })
-        .catch((err) => {
-          this.show(false, "Error, delete shorten link failed");
-        });
+        .catch((e) => {
+                this.show(false, "Error, delete shorten link failed");
 
-      return _res;
+        });
+      this.show(true, "Shorten link has been deleted successfully");
+      setTimeout(() => this.$router.push({ name: "dashboard" }), 2000);
+      
     },
     async updateShorten() {
       const _res = await axios
@@ -205,7 +208,7 @@ export default {
           },
         })
         .then((res) => {
-          console.log(res.data.data);
+          // console.log(res.data.data);
           this.url = res.data.data.url;
           this.edit.url = res.data.data.url;
           this.alias = res.data.data.alias;
