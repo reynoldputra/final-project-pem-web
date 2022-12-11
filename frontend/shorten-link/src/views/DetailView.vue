@@ -198,7 +198,6 @@ export default {
     },
     show(status, msg) {
       this.alert.isShow = !this.alert.isShow;
-      console.log(this.alert.isShow);
       this.alert.status = status;
       this.alert.msg = msg;
     },
@@ -252,7 +251,6 @@ export default {
           this.groupbyHour.push(
             ...res.data.data.countClick.groupByHour
           );
- 
         });
     },
     async logout() {

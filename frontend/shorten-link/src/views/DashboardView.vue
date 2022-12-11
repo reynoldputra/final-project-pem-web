@@ -75,10 +75,6 @@ import { signOut } from "@firebase/auth";
 import Alert from "../components/Alert.vue";
 import {validateURL} from "../lib/validation"
 const port = 3001;
-
-
-const token = cookies.get("token");
-
 export default {
   components: {
     Navbar,
@@ -93,13 +89,12 @@ export default {
         status: false,
         msg:''
       },
-      nama_user: null,  
+      token:cookies.get("token"),
+      nama_user: cookies.get("username"),  
       links: [],
     };
   },
   beforeMount() {
-    const username = cookies.get("username");
-    this.nama_user = username;
     this.getLinks();
   },
   methods: {
@@ -125,7 +120,7 @@ export default {
           },
           {
             headers: {
-              authorization: `Bearer ${token}`,
+              authorization: `Bearer ${this.token}`,
             },
           }
         )
@@ -137,7 +132,7 @@ export default {
       const res = await axios
         .get(`http://localhost:${port}/api/shorten`, {
           headers: {
-            authorization: `Bearer ${token}`,
+            authorization: `Bearer ${this.token}`,
           },
         })
         .catch();

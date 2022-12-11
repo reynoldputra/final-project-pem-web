@@ -1,6 +1,6 @@
 <template>
   <div
-    class="z-10 w-fit bottom-12 right-12 fixed alert shadow-lg flex transform transition-all duration-500 cursor-pointer"
+    class="z-50 w-fit bottom-12 right-12 fixed alert shadow-lg flex transform transition-all duration-500 cursor-pointer"
     :class="this.status ? 'alert-success' : 'alert-error'"
     @click="this.$emit('close')"
   >

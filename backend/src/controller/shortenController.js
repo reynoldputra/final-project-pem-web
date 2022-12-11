@@ -96,9 +96,7 @@ shortenController.get("/", checkIfAuthenticated, async (req, res) => {
 });
 
 shortenController.delete("/:id", checkIfAuthenticated, async (req, res) => {
-  console.log("test");
   const id = req.params.id;
-  console.log(id);
   try {
     const _res = await deleteShorten(id, req)
     if(_res){

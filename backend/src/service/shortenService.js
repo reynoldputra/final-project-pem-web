@@ -91,11 +91,11 @@ export const getUrlbyAlias = async (alias) => {
     let docSnap = {};
     let times = [];
     let d = Timestamp.now().seconds;
-    let date = new Date(d1000);
+    let date = new Date(d*1000);
     date.setHours(date.getHours() + Math.round(date.getMinutes() / 60));
     date.setMinutes(0, 0, 0);
     let today = date.getTime() / 1000;
-    let roundMidnight = new Date(d1000).setHours(24, 0, 0, 0) / 1000;
+    let roundMidnight = new Date(d * 1000).setHours(24, 0, 0, 0) / 1000;
     _res.forEach((data) => {
       data.data().clickTimestamp.forEach((time) => {
         times.push({
