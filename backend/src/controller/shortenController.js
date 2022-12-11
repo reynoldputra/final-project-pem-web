@@ -55,10 +55,10 @@ shortenController.get("/in/:alias", async (req, res) => {
       });
     });
   } catch (err) {
-    return res.send({
+    return res.send({ 
       status: false,
       message: err.message,
-    });
+    }); 
   }
 });
 
