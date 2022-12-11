@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex justify-center flex-col overflow-hidden h-full">
+  <div class="relative flex justify-center flex-col overflow-hidden min-h-screen">
     <Alert  :msg="this.alert.msg" :status="this.alert.status"  @close="close" :class="this.alert.isShow ? '-translate-y-0' : 'translate-y-32'"/>
     <Navbar :name="this.nama_user" @logout="logout" class="pt-10"> </Navbar>
     <div
@@ -84,6 +84,8 @@ export default {
   },
   data() {
     return {
+      shorten:"",
+      url:"",
       alert:{
         isShow: false,
         status: false,

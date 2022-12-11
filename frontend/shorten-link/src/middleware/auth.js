@@ -9,6 +9,7 @@ export default async function checkAuth(){
         }).catch((Err)=>{
             console.log(Err)
         })
+        console.log(res);
         if(res.data.status == true) return true        
     } else return false
 }
