@@ -12,6 +12,8 @@ export default {
   },
   data() {
     return {
+      login_email:"",
+      login_password:"",
       alert: {
         isShow: false,
         status: false,
