@@ -35,15 +35,20 @@ const router = createRouter({
       beforeEnter: async (to, from, next) => {
         const isVerified = await checkAuth();
         if (!isVerified) {
-          return this.$router.push("/login");
-        }else return next()
-      },
+          return next({name:'login'});
+        }else return next()
+      },
     },
     {
       path: "/dashboard/url/:alias",
       name: "url",
       component: DetailView,
-      
+      beforeEnter: async (to, from, next) => {
+        const isVerified = await checkAuth();
+        if (!isVerified) {
+          return next({name:'login'});
+        }else return next()
+      },
     },
     {
       path: "/in/:alias",
